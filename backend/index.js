@@ -1,46 +1,48 @@
 import express from 'express';
 import cors from 'cors';
 import Docker from 'dockerode';
+import db from './db.js';
+
+import { createServer } from 'http';
+import { WebSocketServer } from 'ws';
+
+import authRoutes from './routes/auth.js';
+import containerRoutes from './routes/containers.js';
+import historyRoutes from './routes/history.js';
+import settingsRoutes from './routes/settings.js';
 
 const app = express();
 const port = 3000;
 
-const docker = new Docker({ socketPath: '/var/run/docker.sock' }); //docker listener verbindet sich automatisch mit dem lokalen docker socket
+const server = createServer(app);
+const wss = new WebSocketServer({ server });
+
 
 app.use(cors());
 app.use(express.json());
 
-//für testzwäcke
-app.get('/api/containers', (req, res) => {
-    res.json([
-        { id: "1", name: "test-container", image: "nginx:latest", state: "running", status: "Up 5 minutes" },
-        { id: "2", name: "db-container", image: "postgres:15", state: "exited", status: "Exited (1) 2 hours ago" }
-    ]);
+
+app.use('/api/auth', authRoutes);
+
+app.use('/api/auth', containerRoutes);
+
+app.use('/api/history', historyRoutes);
+
+app.use('/api/settings', settingsRoutes);
+
+
+export function logEvent(containerId, containerName, type) {
+    db.prepare(`
+    INSERT INTO events (container_id, container_name, type, timestamp)
+    VALUES (?, ?, ?, ?)
+  `).run(containerId, containerName, type, Date.now());
+}
+
+wss.on('connection', (ws) => {
+    console.log('Client connected');
+    ws.on('close', () => console.log('Client disconnected'));
 });
-// funktionierender endpunkt für container
-/*
-app.get('/api/containers', async (req, res) => {
-    try {
-        const containers = await docker.listContainers({ all: true });
 
-        // Mappt die rohen Docker-Daten auf ein sauberes, kompaktes Format
-        const cleanContainers = containers.map(c => ({
-            id: c.Id.substring(0, 12),
-            name: c.Names[0].replace('/', ''),
-            image: c.Image,
-            state: c.State,
-            status: c.Status
-        }));
-
-        res.json(cleanContainers);
-    } catch (error) {
-        console.error("Docker API Error:", error);
-        res.status(500).json({ error: "Fehler beim Abrufen der Container-Daten" });
-    }
-});*/
-
-app.use(cors());
-app.use(express.json());
 
 app.listen(port, () => {
     console.log(`Backend Server listening on port ${port}`);
