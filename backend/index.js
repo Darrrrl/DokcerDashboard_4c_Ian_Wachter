@@ -24,7 +24,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 
-app.use('/api/auth', containerRoutes);
+app.use('/api/container', containerRoutes);
 
 app.use('/api/history', historyRoutes);
 

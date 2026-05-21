@@ -8,7 +8,7 @@ const router = Router();
 
 app.get('/setup-required', (req, res) => {
 
-    const user = db.prepare('SELECT * FROM users LIMIT 1').get();
+    const user = db.prepare('select * FROM users limit 1').get();
     res.json({ required: !user });
 
 });
@@ -43,3 +43,4 @@ router.post('/login', async (req, res) => {
 
 });
 
+export default auth;
