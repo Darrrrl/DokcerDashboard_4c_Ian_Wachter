@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import containerRoutes from './routes/containers.js';
 import historyRoutes from './routes/history.js';
 import settingsRoutes from './routes/settings.js';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 const port = 3000;
@@ -52,6 +53,8 @@ const swaggerOptions = {
     // Hier sagst du Swagger, wo deine dokumentierten Routen liegen
     apis: ['./routes/*.js'],
 };
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export function logEvent(containerId, containerName, type) {
     db.prepare(`
