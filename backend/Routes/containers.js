@@ -5,6 +5,12 @@ import db from '../db.js';
 const router = Router();
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
+/*GET  /api/containers              – Alle Container auflisten
+GET  /api/containers/:id          – Einzelner Container (Metadaten, Ports, Volumes…)
+POST /api/containers/:id/start    – Container starten
+POST /api/containers/:id/stop     – Container stoppen
+POST /api/containers/:id/restart  – Container neu starten */
+
 //für testzwäcke
 router.get('/', (req, res) => {
     res.json([
@@ -100,5 +106,7 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: "Fehler beim Abrufen der Container-Details" });
     }
 });*/
+
+
 
 export default container;

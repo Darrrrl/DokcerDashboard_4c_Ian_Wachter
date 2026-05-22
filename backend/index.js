@@ -24,12 +24,34 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 
-app.use('/api/container', containerRoutes);
+app.use('/api/container', authenticateToken, containerRoutes);
 
-app.use('/api/history', historyRoutes);
+app.use('/api/history', authenticateToken, historyRoutes);
 
-app.use('/api/settings', settingsRoutes);
+app.use('/api/settings', authenticateToken, settingsRoutes);
 
+// --- Swagger Konfiguration ---
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'DockerDash API',
+            version: '1.0.0',
+            description: 'API Dokumentation für das Docker-Management Backend',
+        },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                }
+            }
+        }
+    },
+    // Hier sagst du Swagger, wo deine dokumentierten Routen liegen
+    apis: ['./routes/*.js'],
+};
 
 export function logEvent(containerId, containerName, type) {
     db.prepare(`

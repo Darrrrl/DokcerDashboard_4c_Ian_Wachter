@@ -30,12 +30,13 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
+    
   );
 `);
 
 
 const insertSetting = db.prepare(
-    'INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)'
+  'INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)'
 );
 insertSetting.run('language', 'de');
 insertSetting.run('ws_reconnect_interval', '5000');

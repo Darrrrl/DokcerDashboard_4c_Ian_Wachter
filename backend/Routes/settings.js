@@ -4,6 +4,10 @@ import db from '../db.js';
 
 const router = Router();
 
+/*
+GET /api/settings                 – Einstellungen laden
+PUT /api/settings                 – Einstellungen speichern (Sprache, WS-Intervall, etc.) */
+
 router.get('/', (req, res) => {
     try {
         const settings = db.prepare(' select * from settings').all();
