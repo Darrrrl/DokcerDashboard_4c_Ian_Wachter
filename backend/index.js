@@ -1,4 +1,5 @@
 import express from 'express';
+import 'dotenv/config';
 import cors from 'cors';
 import Docker from 'dockerode';
 import db from './db.js';
@@ -23,10 +24,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
+const docker = new Docker({ socketPath: '/var/run/docker.sock' });
+
 const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -34,7 +41,6 @@ app.use('/api/container', authenticateToken, containerRoutes);
 app.use('/api/history', authenticateToken, historyRoutes);
 app.use('/api/settings', authenticateToken, settingsRoutes);
 
-// --- Swagger Configuration ---
 const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
@@ -72,7 +78,7 @@ export function logEvent(containerId, containerName, type) {
   `).run(containerId, containerName, type, Date.now());
 }
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
 
     if (req.url === '/ws/stats') {
         console.log('Client connected to /ws/stats');
@@ -105,7 +111,6 @@ wss.on('connection', (ws) => {
                     };
                 });
 
-                // Auf alle Antworten warten und gebündelt senden
                 const statsData = await Promise.all(statsPromises);
                 ws.send(JSON.stringify(statsData));
 
