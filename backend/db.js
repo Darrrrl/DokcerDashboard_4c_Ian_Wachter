@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const db = new Database(join(__dirname, '../data/dockerdash.db'));
+const db = new Database(join(__dirname, '/data/dockerdash.db'));
 
 
 db.pragma('journal_mode = WAL');

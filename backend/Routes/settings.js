@@ -10,17 +10,14 @@ PUT /api/settings                 – Einstellungen speichern (Sprache, WS-Inter
 
 router.get('/', (req, res) => {
     try {
-        const settings = db.prepare(' select * from settings').all();
+        const rows = db.prepare('SELECT * FROM settings').all();
 
 
         const settings = rows.reduce((acc, row) => {
             acc[row.key] = row.value;
             return acc;
         }, {});
-
-
         res.json(settings);
-
     } catch (error) {
         console.error("Datenbankfehler:", error);
         res.status(500).json({ error: "Fehler beim Laden der Einstellungen" });
@@ -49,4 +46,4 @@ router.put('/', (req, res) => {
 });
 
 
-export default settings;
+export default router;

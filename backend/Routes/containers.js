@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import Docker, { Container } from 'dockerode';
+import Docker from 'dockerode';
+const { Container } = Docker;
 import db from '../db.js';
 
 const router = Router();
@@ -11,16 +12,10 @@ POST /api/containers/:id/start    – Container starten
 POST /api/containers/:id/stop     – Container stoppen
 POST /api/containers/:id/restart  – Container neu starten */
 
-//für testzwäcke
-router.get('/', (req, res) => {
-    res.json([
-        { id: "1", name: "test-container", image: "nginx:latest", state: "running", status: "Up 5 minutes" },
-        { id: "2", name: "db-container", image: "postgres:15", state: "exited", status: "Exited (1) 2 hours ago" }
-    ]);
-});
+
 
 // funktionierender endpunkt für container
-/*
+
 router.get('/', async (req, res) => {
     try {
         const containers = await docker.listContainers({ all: true });
@@ -37,46 +32,12 @@ router.get('/', async (req, res) => {
         res.json(cleanContainers);
     } catch (error) {
         console.error("Docker API Error:", error);
-        res.status(500).json({ error: "Fehler beim Abrufen der Container-Daten" });
-    }
-});*/
-
-// funktionierender endpunkt für container
-
-router.get('/:id', async (req, res) => {
-
-    const id = req.params.id;
-
-    try {
-
-
-        const mockDetails = {
-            id: id,
-            name: `mock-container-${id.substring(0, 4)}`,
-            image: "nginx:latest",
-            state: "running", // oder "exited"
-            status: "Up 2 hours",
-            network: "bridge",
-            ports: [
-                { private: 80, public: 8080, type: "tcp" }
-            ],
-            volumes: [
-                { source: "/host/nginx/html", destination: "/usr/share/nginx/html", mode: "rw" }
-            ],
-            env: [
-                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-                "NGINX_VERSION=1.25.3"
-            ]
-        };
-
-        res.json(mockDetails);
-    } catch (error) {
-        console.error("Docker API Error:", error);
-        res.status(500).json({ error: "Fehler beim Abrufen der Container-Details" });
+        res.status(500).json({ error: "Error when calling the container-data" });
     }
 });
 
-/*
+
+
 router.get('/:id', async (req, res) => {
 
     const id = req.params.id;
@@ -103,10 +64,63 @@ router.get('/:id', async (req, res) => {
         res.json(cleanContainers);
     } catch (error) {
         console.error("Docker API Error:", error);
-        res.status(500).json({ error: "Fehler beim Abrufen der Container-Details" });
+        res.status(500).json({ error: "Error when calling the container" });
     }
-});*/
+});
+
+router.get('/:id/start', async (req, res) => {
+
+    const id = req.params.id;
+
+    try {
+        const container = await docker.getContainer(req.params.id);
+
+        await container.start();
 
 
+        res.json({ ok: true, message: `Container ${id} started.` });
 
-export default container;
+    } catch (error) {
+        console.error("Docker API Error:", error);
+        res.status(500).json({ error: "Failed to start container" });
+    }
+});
+
+router.get('/:id/stop', async (req, res) => {
+
+    const id = req.params.id;
+
+    try {
+        const container = await docker.getContainer(req.params.id);
+
+        await container.stop();
+
+
+        res.json({ ok: true, message: `Container ${id} stopped.` });
+
+    } catch (error) {
+        console.error("Docker API Error:", error);
+        res.status(500).json({ error: "Failed to stop container" });
+    }
+});
+
+router.get('/:id/restart', async (req, res) => {
+
+    const id = req.params.id;
+
+    try {
+        const container = await docker.getContainer(req.params.id);
+
+        await container.restart();
+
+
+        res.json({ ok: true, message: `Container ${id} restarted.` });
+
+    } catch (error) {
+        console.error("Docker API Error:", error);
+        res.status(500).json({ error: "Failed to restart container" });
+    }
+});
+
+
+export default router;

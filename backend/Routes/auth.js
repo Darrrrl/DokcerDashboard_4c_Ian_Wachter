@@ -14,7 +14,7 @@ GET  /api/auth/setup-required – Prüfen ob Setup nötig
 POST /api/auth/login          – Login → JWT zurückgeben
 PUT  /api/auth/password       – Passwort ändern (Settings)*/
 
-app.get('/setup-required', (req, res) => {
+router.get('/setup-required', (req, res) => {
 
     const user = db.prepare('select * FROM users limit 1').get();
     res.json({ required: !user });
@@ -70,6 +70,5 @@ router.put('/password', authenticateToken, async (req, res) => {
     res.json({ ok: true });
 });
 
-
-export default auth;
+export default router;
 
