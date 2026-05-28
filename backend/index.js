@@ -85,30 +85,42 @@ wss.on('connection', (ws, req) => {
 
         const statsInterval = setInterval(async () => {
             try {
+                // WICHTIG: { all: true } statt nur 'running'
+                const allContainers = await docker.listContainers({ all: true });
 
-                const containers = await docker.listContainers({ filters: { status: ['running'] } });
+                const statsPromises = allContainers.map(async (c) => {
+                    // Grundgerüst für JEDEN Container
+                    const containerData = {
+                        id: c.Id.substring(0, 12),
+                        state: c.State, // Hier schicken wir den aktuellen Status mit!
+                        cpu: '...',
+                        ram: '...',
+                        ramUsageMb: '0.0'
+                    };
 
-                const statsPromises = containers.map(async (c) => {
+                    // Nur wenn er läuft, fragen wir die schweren Stats ab
+                    if (c.State === 'running') {
+                        try {
+                            const stats = await docker.getContainer(c.Id).stats({ stream: false });
 
-                    const stats = await docker.getContainer(c.Id).stats({ stream: false });
+                            const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
+                            const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
 
-                    const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
-                    const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
-                    let cpuPercent = 0.0;
-                    if (systemDelta > 0.0 && cpuDelta > 0.0) {
-                        cpuPercent = (cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100.0;
+                            if (systemDelta > 0.0 && cpuDelta > 0.0) {
+                                containerData.cpu = ((cpuDelta / systemDelta) * stats.cpu_stats.online_cpus * 100.0).toFixed(2);
+                            }
+
+                            const usedMemory = stats.memory_stats.usage - (stats.memory_stats.stats?.cache || 0);
+                            const availableMemory = stats.memory_stats.limit;
+                            containerData.ram = ((usedMemory / availableMemory) * 100.0).toFixed(2);
+                            containerData.ramUsageMb = (usedMemory / 1024 / 1024).toFixed(1);
+                        } catch (statError) {
+                            // Falls der Container genau in dieser Millisekunde stoppt
+                            containerData.state = 'exited';
+                        }
                     }
 
-                    const usedMemory = stats.memory_stats.usage - (stats.memory_stats.stats?.cache || 0);
-                    const availableMemory = stats.memory_stats.limit;
-                    const ramPercent = (usedMemory / availableMemory) * 100.0;
-
-                    return {
-                        id: c.Id.substring(0, 12),
-                        cpu: cpuPercent.toFixed(2),
-                        ram: ramPercent.toFixed(2),
-                        ramUsageMb: (usedMemory / 1024 / 1024).toFixed(1)
-                    };
+                    return containerData;
                 });
 
                 const statsData = await Promise.all(statsPromises);

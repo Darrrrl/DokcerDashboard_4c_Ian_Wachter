@@ -51,11 +51,13 @@ function createContainerStore() {
 
                     containers = containers.map((container) => {
                         const freshStats = liveStats.find((stat) => stat.id === container.id);
+
                         if (freshStats) {
                             return {
                                 ...container,
                                 cpu: freshStats.cpu,
                                 ram: freshStats.ram,
+                                state: freshStats.state // <-- DIESE ZEILE HINZUFÜGEN!
                             };
                         }
                         return container;
