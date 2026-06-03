@@ -37,7 +37,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/container', authenticateToken, containerRoutes);
+app.use('/api/containers', authenticateToken, containerRoutes);
 app.use('/api/history', authenticateToken, historyRoutes);
 app.use('/api/settings', authenticateToken, settingsRoutes);
 

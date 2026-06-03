@@ -20,7 +20,7 @@ function createContainerStore() {
 
             // 1. Initialer REST Fetch
             try {
-                const res = await fetch("http://localhost:3000/api/container", {
+                const res = await fetch("http://localhost:3000/api/containers", {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${authState.token}`,
