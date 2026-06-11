@@ -164,7 +164,8 @@
                 <span class="resource-label">Container</span>
                 <span class="resource-value"
                     >{runningContainers.length} / {containerStore.containers
-                        .length} {t("dashboard.stats.running")}</span
+                        .length}
+                    {t("dashboard.stats.running")}</span
                 >
             </div>
             <div class="resource-track">
@@ -180,7 +181,7 @@
         </div>
     </div>
 
-    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div class="mb-6 grid grid-cols-3 gap-3">
         <div class="stat-card stat-running">
             <span class="stat-num">{counts.running}</span>
             <span class="stat-lbl">{t("dashboard.tabs.running")}</span>
@@ -236,7 +237,6 @@
             </div>
         {/each}
     </div>
-
     {#if filteredContainers.length === 0}
         <div class="mt-16 flex flex-col items-center gap-3 text-center">
             <div class="text-4xl opacity-20">📦</div>
@@ -295,21 +295,14 @@
     }
     .resource-bar {
         display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.75rem;
         margin-bottom: 1.5rem;
         padding: 1rem 1.25rem;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 14px;
         backdrop-filter: blur(8px);
-    }
-
-    @media (min-width: 768px) {
-        .resource-bar {
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.75rem;
-        }
     }
 
     .resource-item {

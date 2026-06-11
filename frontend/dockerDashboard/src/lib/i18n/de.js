@@ -1,76 +1,46 @@
 export default {
-    nav: {
-        dashboard: "Dashboard",
-        history: "Verlauf",
-        settings: "Einstellungen",
-    },
     dashboard: {
         title: "Dashboard",
         subtitle: "Übersicht und Steuerung deines Docker-Stacks",
         search: "Container suchen...",
-        empty: "Keine Container gefunden",
-        tabs: {
-            all: "Alle",
-            running: "Aktiv",
-            stopped: "Gestoppt",
-            error: "Fehler",
-        },
-        stats: {
-            running: "Aktiv",
-            stopped: "Gestoppt",
-            error: "Fehler",
-        }
+        totalCpu: "Total CPU",
+        avgRam: "Ø RAM",
+        containers: "Container",
+        active: "aktiv",
+        noContainers: "Keine Container gefunden"
     },
-    history: {
-        title: "Ereignis-Verlauf",
-        subtitle: "Protokoll aller Container-Aktivitäten",
-        empty: "Keine Ereignisse gefunden",
-        filters: {
-            container: "Container",
-            type: "Ereignis-Typ",
-            from: "Von",
-            to: "Bis",
-            all: "Alle",
-        },
-        table: {
-            container: "Container",
-            event: "Ereignis",
-            user: "Ausgelöst durch",
-            time: "Zeitpunkt",
-        }
-    },
-    setup: {
-        title: "Willkommen",
-        subtitle: "Erstelle deinen ersten Administrator-Account",
-        username: "Benutzername",
-        password: "Passwort",
-        create: "Account erstellen",
-        error: "Fehler beim Erstellen des Accounts",
+    details: {
+        back: "Zurück zum Dashboard",
+        loading: "Lade Container Details...",
+        metadata: "Metadaten",
+        network: "Netzwerk",
+        ports: "Ports",
+        noPorts: "Keine Ports veröffentlicht",
+        volumes: "Volumes",
+        volumesConnected: "Volume(s) verbunden",
+        noVolumes: "Keine Volumes gemountet",
+        environment: "Environment",
+        envVars: "Variablen gesetzt",
+        resources: "Ressourcen (Live)",
+        liveLogs: "Live Logs",
+        confirmStop: "Möchtest du diesen Container wirklich stoppen?",
+        confirmRestart: "Möchtest du diesen Container wirklich neu starten?"
     },
     settings: {
         title: "Einstellungen",
-        subtitle: "Konfiguration für DockerDash",
-        saved: "Gespeichert",
+        subtitle: "Passe das Dashboard an deine Bedürfnisse an",
         save: "Speichern",
+        saved: "Gespeichert",
         sections: {
-            appearance: "Darstellung",
+            appearance: "Erscheinungsbild",
             connection: "Verbindung",
-            containers: "Container",
+            containers: "Container"
         },
         language: "Sprache",
         darkMode: "Dark Mode",
-        wsInterval: "WebSocket-Intervall",
-        wsIntervalHint: "Aktualisierungsrate in Millisekunden (min. 500)",
-        hiddenContainers: "Versteckte Container",
-        hiddenContainersHint: "Diese Container werden im Dashboard nicht angezeigt",
-        noContainers: "Keine Container verfügbar",
-    },
-    container: {
-        start: "Starten",
-        stop: "Stoppen",
-        restart: "Neustarten",
-        confirmStop: "Möchtest du {name} wirklich stoppen?",
-        confirmRestart: "Möchtest du {name} wirklich neu starten?",
-        networkError: "Netzwerkfehler",
+        wsInterval: "Aktualisierungsrate",
+        wsIntervalHint: "Intervall für Live-Daten (in ms)",
+        hiddenContainersHint: "Wähle Container, die auf dem Dashboard versteckt werden sollen",
+        noContainers: "Keine Container verfügbar"
     }
 };
