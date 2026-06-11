@@ -29,11 +29,11 @@ router.put('/', (req, res) => {
     const updates = req.body;
 
     try {
-        const updateSetting = db.prepare('UPDATE settings SET value = ? WHERE key = ?');
+        const updateSetting = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
 
         const transaction = db.transaction((settingsObj) => {
             for (const [key, value] of Object.entries(settingsObj)) {
-                updateSetting.run(String(value), key);
+                updateSetting.run(key, String(value));
             }
         });
 

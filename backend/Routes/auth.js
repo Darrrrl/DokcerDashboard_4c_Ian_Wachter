@@ -26,6 +26,12 @@ router.post('/setup', async (req, res) => {
 
     const { username, password } = req.body;
 
+    // Protection: Only allow setup if no users exist
+    const existingUser = db.prepare('SELECT id FROM users LIMIT 1').get();
+    if (existingUser) {
+        return res.status(403).json({ error: 'Setup already completed' });
+    }
+
     const hash = await bcrypt.hash(password, 12);
 
     db.prepare('INSERT INTO users (username, password) VALUES (?, ?)').run(username, hash);
@@ -46,10 +52,16 @@ router.post('/login', async (req, res) => {
 
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.json({ token });
 
+});
+
+router.post('/refresh', authenticateToken, (req, res) => {
+    const user = req.user; // Set by authenticateToken middleware
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.json({ token });
 });
 
 

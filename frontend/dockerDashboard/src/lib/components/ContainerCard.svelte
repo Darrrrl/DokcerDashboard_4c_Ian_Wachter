@@ -1,8 +1,11 @@
 <script>
     import { authState } from "$lib/shared/authStore.svelte.js";
+    import { settingsStore } from "$lib/shared/settingsStore.svelte.js";
 
     let isProcessing = $state(false);
     let { container } = $props();
+
+    const t = (key, replacements) => settingsStore.t(key, replacements);
 
     // Parse CPU percentage for bar width (e.g. "3.2%" → 3.2)
     const cpuPercent = $derived(() => {
@@ -16,12 +19,12 @@
     async function handleAction(action) {
         if (
             action === "stop" &&
-            !confirm(`Möchtest du ${container.name} wirklich stoppen?`)
+            !confirm(t("container.confirmStop", { name: container.name }))
         )
             return;
         if (
             action === "restart" &&
-            !confirm(`Möchtest du ${container.name} wirklich neu starten?`)
+            !confirm(t("container.confirmRestart", { name: container.name }))
         )
             return;
 
@@ -34,10 +37,10 @@
                     headers: { Authorization: `Bearer ${authState.token}` },
                 },
             );
-            if (!res.ok) alert(`Fehler beim ${action} von ${container.name}`);
+            if (!res.ok) alert(`${t("container.networkError")} (${action})`);
         } catch (error) {
             console.error(error);
-            alert("Netzwerkfehler");
+            alert(t("container.networkError"));
         } finally {
             isProcessing = false;
         }
@@ -117,10 +120,11 @@
                             width="14"
                             height="14"
                             viewBox="0 0 24 24"
-                            fill="currentColor"><path d="M8 5v14l11-7z" /></svg
+                            fill="currentColor"
+                            ><path d="M8 5v14l11-7z" /></svg
                         >
                     {/if}
-                    Start
+                    {t("container.start")}
                 </button>
             {:else if container.state === "running"}
                 <button
@@ -128,37 +132,40 @@
                     disabled={isProcessing}
                     class="btn btn-restart"
                 >
-                    <svg
-                        class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
-
-                    Restart
+                    {#if isProcessing}
+                        <span class="spinner"></span>
+                    {:else}
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                        >
+                            <path d="M23 4v6h-6" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                    {/if}
+                    {t("container.restart")}
                 </button>
                 <button
                     onclick={() => handleAction("stop")}
                     disabled={isProcessing}
                     class="btn btn-stop"
                 >
-                    <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        ><rect x="6" y="6" width="12" height="12" rx="1" /></svg
-                    >
-                    Stop
+                    {#if isProcessing}
+                        <span class="spinner"></span>
+                    {:else}
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            ><rect x="6" y="6" width="12" height="12" rx="1" /></svg
+                        >
+                    {/if}
+                    {t("container.stop")}
                 </button>
             {/if}
         </div>

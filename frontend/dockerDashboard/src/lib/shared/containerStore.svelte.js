@@ -1,36 +1,54 @@
-
-import { authState } from "./authStore.svelte.js";
+import { authState, refreshToken } from "./authStore.svelte.js";
+import { settingsStore } from "./settingsStore.svelte.js";
 
 function createContainerStore() {
-    // Unser zentraler State
-    let containers = $state([]);
+    let allContainers = $state([]);
+    let statsHistory = $state({}); // { containerId: [{ time: string, cpu: number, ram: number }] }
     let errorMessage = $state("");
-
-    // Normale Variable für den WebSocket (muss nicht reaktiv sein)
     let socket = null;
+    let reconnectTimeout = null;
+
+    async function apiFetch(url, options = {}) {
+        let res = await fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                Authorization: `Bearer ${authState.token}`
+            }
+        });
+
+        if (res.status === 401) {
+            const success = await refreshToken();
+            if (success) {
+                res = await fetch(url, {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                        Authorization: `Bearer ${authState.token}`
+                    }
+                });
+            }
+        }
+        return res;
+    }
 
     return {
-        // Getter, damit andere Dateien den State lesen können
-        get containers() { return containers; },
+        get containers() { 
+            return allContainers.filter(c => !settingsStore.hiddenContainers.includes(c.id)); 
+        },
+        get allContainers() { return allContainers; },
+        get statsHistory() { return statsHistory; },
         get errorMessage() { return errorMessage; },
 
-        // Daten laden und WebSocket starten
         async init() {
             errorMessage = "";
 
-            // 1. Initialer REST Fetch
             try {
-                const res = await fetch("http://localhost:3000/api/containers", {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${authState.token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
+                const res = await apiFetch("http://localhost:3000/api/containers");
 
                 if (res.ok) {
                     const rawContainers = await res.json();
-                    containers = rawContainers.map((c) => ({
+                    allContainers = rawContainers.map((c) => ({
                         ...c,
                         cpu: "...",
                         ram: "...",
@@ -42,39 +60,59 @@ function createContainerStore() {
                 errorMessage = "Connection error to API.";
             }
 
-            // 2. WebSocket verbinden (nur wenn noch nicht verbunden)
-            if (!socket || socket.readyState === WebSocket.CLOSED) {
-                socket = new WebSocket("ws://localhost:3000/ws/stats");
-
-                socket.onmessage = (event) => {
-                    const liveStats = JSON.parse(event.data);
-
-                    containers = containers.map((container) => {
-                        const freshStats = liveStats.find((stat) => stat.id === container.id);
-
-                        if (freshStats) {
-                            return {
-                                ...container,
-                                cpu: freshStats.cpu,
-                                ram: freshStats.ram,
-                                state: freshStats.state // <-- DIESE ZEILE HINZUFÜGEN!
-                            };
-                        }
-                        return container;
-                    });
-                };
-
-                socket.onerror = () => {
-                    console.error("WebSocket connection error");
-                    errorMessage = "WebSocket Error";
-                };
-            }
+            this.connectWebSocket();
         },
 
-        // WebSocket sauber beenden
+        connectWebSocket() {
+            if (socket && socket.readyState !== WebSocket.CLOSED) return;
+
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
+
+            socket = new WebSocket(`ws://localhost:3000/ws/stats?token=${authState.token}`);
+
+            socket.onmessage = (event) => {
+                const liveStats = JSON.parse(event.data);
+                const time = new Date().toLocaleTimeString();
+
+                allContainers = allContainers.map((container) => {
+                    const freshStats = liveStats.find((stat) => stat.id === container.id);
+
+                    if (freshStats) {
+                        // Update stats history
+                        const history = statsHistory[container.id] || [];
+                        const newHistory = [...history, {
+                            time,
+                            cpu: parseFloat(freshStats.cpu),
+                            ram: parseFloat(freshStats.ramUsageMb)
+                        }].slice(-1800); // Keep last 1800 points (30 mins)
+                        
+                        statsHistory[container.id] = newHistory;
+
+                        return {
+                            ...container,
+                            cpu: freshStats.cpu,
+                            ram: freshStats.ram,
+                            state: freshStats.state
+                        };
+                    }
+                    return container;
+                });
+            };
+
+            socket.onclose = () => {
+                console.log(`WebSocket closed. Reconnecting in ${settingsStore.wsInterval}ms...`);
+                reconnectTimeout = setTimeout(() => this.connectWebSocket(), settingsStore.wsInterval);
+            };
+
+            socket.onerror = (e) => {
+                console.error("WebSocket connection error", e);
+                errorMessage = "WebSocket Error";
+            };
+        },
+
         disconnect() {
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
             if (socket) {
-                console.log("Closing WebSocket...");
                 socket.close();
                 socket = null;
             }
@@ -82,5 +120,4 @@ function createContainerStore() {
     };
 }
 
-// Wir exportieren EINE globale Instanz, die von überall genutzt wird
 export const containerStore = createContainerStore();

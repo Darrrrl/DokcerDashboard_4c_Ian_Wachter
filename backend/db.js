@@ -42,4 +42,11 @@ insertSetting.run('language', 'de');
 insertSetting.run('ws_reconnect_interval', '5000');
 insertSetting.run('dark_mode', 'true');
 
+export function logEvent(containerId, containerName, type) {
+  db.prepare(`
+    INSERT INTO events (container_id, container_name, type, timestamp)
+    VALUES (?, ?, ?, ?)
+  `).run(containerId, containerName, type, Date.now());
+}
+
 export default db;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Docker from 'dockerode';
 const { Container } = Docker;
-import db from '../db.js';
+import db, { logEvent } from '../db.js';
 
 const router = Router();
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
@@ -58,8 +58,10 @@ router.post('/:id/start', async (req, res) => {
     const id = req.params.id;
 
     try {
-        const container = await docker.getContainer(req.params.id);
+        const container = await docker.getContainer(id);
+        const info = await container.inspect();
         await container.start();
+        logEvent(id.substring(0, 12), info.Name.replace('/', ''), 'start');
         res.json({ ok: true, message: `Container ${id} started.` });
     } catch (error) {
         console.error("Docker API Error:", error);
@@ -71,8 +73,10 @@ router.post('/:id/stop', async (req, res) => {
     const id = req.params.id;
 
     try {
-        const container = await docker.getContainer(req.params.id);
+        const container = await docker.getContainer(id);
+        const info = await container.inspect();
         await container.stop();
+        logEvent(id.substring(0, 12), info.Name.replace('/', ''), 'stop');
         res.json({ ok: true, message: `Container ${id} stopped.` });
     } catch (error) {
         console.error("Docker API Error:", error);
@@ -84,8 +88,10 @@ router.post('/:id/restart', async (req, res) => {
     const id = req.params.id;
 
     try {
-        const container = await docker.getContainer(req.params.id);
+        const container = await docker.getContainer(id);
+        const info = await container.inspect();
         await container.restart();
+        logEvent(id.substring(0, 12), info.Name.replace('/', ''), 'restart');
         res.json({ ok: true, message: `Container ${id} restarted.` });
     } catch (error) {
         console.error("Docker API Error:", error);

@@ -15,6 +15,7 @@
         language = settingsStore.language;
         darkMode = settingsStore.darkMode;
         wsInterval = settingsStore.wsInterval;
+        hiddenContainers = settingsStore.hiddenContainers;
 
         await containerStore.init();
     });
@@ -27,6 +28,7 @@
             language,
             dark_mode: darkMode,
             ws_reconnect_interval: wsInterval,
+            hidden_containers: hiddenContainers
         });
         saving = false;
         saveSuccess = true;
@@ -145,10 +147,10 @@
             <h2 class="section-title">{t("settings.sections.containers")}</h2>
             <p class="section-desc">{t("settings.hiddenContainersHint")}</p>
             <div class="section-body">
-                {#if containerStore.containers.length === 0}
+                {#if containerStore.allContainers.length === 0}
                     <p class="empty-hint">{t("settings.noContainers")}</p>
                 {:else}
-                    {#each containerStore.containers as container}
+                    {#each containerStore.allContainers as container}
                         <div class="setting-row">
                             <div class="setting-info">
                                 <span class="container-name"
@@ -193,6 +195,16 @@
         justify-content: space-between;
         margin-bottom: 2.5rem;
         gap: 1rem;
+    }
+
+    @media (max-width: 480px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .save-btn {
+            width: 100%;
+        }
     }
 
     .page-title {

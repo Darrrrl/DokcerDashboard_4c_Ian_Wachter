@@ -1,6 +1,7 @@
 export default {
     nav: {
         dashboard: "Dashboard",
+        history: "History",
         settings: "Settings",
     },
     dashboard: {
@@ -19,6 +20,32 @@ export default {
             stopped: "Stopped",
             error: "Error",
         }
+    },
+    history: {
+        title: "Event History",
+        subtitle: "Log of all container activities",
+        empty: "No events found",
+        filters: {
+            container: "Container",
+            type: "Event Type",
+            from: "From",
+            to: "To",
+            all: "All",
+        },
+        table: {
+            container: "Container",
+            event: "Event",
+            user: "Triggered by",
+            time: "Time",
+        }
+    },
+    setup: {
+        title: "Welcome",
+        subtitle: "Create your first administrator account",
+        username: "Username",
+        password: "Password",
+        create: "Create Account",
+        error: "Error creating account",
     },
     settings: {
         title: "Settings",

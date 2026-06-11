@@ -1,6 +1,7 @@
 export default {
     nav: {
         dashboard: "Dashboard",
+        history: "Verlauf",
         settings: "Einstellungen",
     },
     dashboard: {
@@ -19,6 +20,32 @@ export default {
             stopped: "Gestoppt",
             error: "Fehler",
         }
+    },
+    history: {
+        title: "Ereignis-Verlauf",
+        subtitle: "Protokoll aller Container-Aktivitäten",
+        empty: "Keine Ereignisse gefunden",
+        filters: {
+            container: "Container",
+            type: "Ereignis-Typ",
+            from: "Von",
+            to: "Bis",
+            all: "Alle",
+        },
+        table: {
+            container: "Container",
+            event: "Ereignis",
+            user: "Ausgelöst durch",
+            time: "Zeitpunkt",
+        }
+    },
+    setup: {
+        title: "Willkommen",
+        subtitle: "Erstelle deinen ersten Administrator-Account",
+        username: "Benutzername",
+        password: "Passwort",
+        create: "Account erstellen",
+        error: "Fehler beim Erstellen des Accounts",
     },
     settings: {
         title: "Einstellungen",
