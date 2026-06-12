@@ -1,6 +1,7 @@
 <script>
 	import { authState, refreshToken } from "$lib/shared/authStore.svelte.js";
 	import { settingsStore } from "$lib/shared/settingsStore.svelte.js";
+	import Background from "$lib/components/Background.svelte";
 	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { onMount } from "svelte";
@@ -13,7 +14,7 @@
 
 		// 1. Check if setup is required
 		try {
-			const res = await fetch("http://localhost:3000/api/auth/setup-required");
+			const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/setup-required`);
 			const data = await res.json();
 			if (data.required && currentPath !== "/setup") {
 				goto("/setup");
@@ -77,6 +78,7 @@
 </script>
 
 <div class="app-root">
+	<Background />
 	{#if authState.isAuthenticated || $page.url.pathname === "/login" || $page.url.pathname === "/setup"}
 		{#if authState.isAuthenticated && $page.url.pathname !== "/setup"}
 			<!-- Mobile Header -->
@@ -254,13 +256,13 @@
 	.app-root {
 		display: flex;
 		min-height: 100vh;
-		background: #09090b;
+		background: var(--bg-app);
 		background-image: radial-gradient(
 			ellipse at top,
-			#18181b 0%,
-			#09090b 60%
+			var(--bg-gradient-top) 0%,
+			var(--bg-app) 60%
 		);
-		color: #f4f4f5;
+		color: var(--text-main);
 		font-family: sans-serif;
 	}
 
@@ -273,13 +275,13 @@
 		width: 220px;
 		display: flex;
 		flex-direction: column;
-		background: #09090b;
-		border-right: 1px solid rgba(255, 255, 255, 0.06);
+		background: var(--sidebar-bg);
+		border-right: 1px solid var(--border-main);
 		backdrop-filter: blur(20px);
 		z-index: 100;
 		padding: 1.25rem 0.75rem;
 		box-sizing: border-box;
-		transition: transform 0.3s ease;
+		transition: transform 0.3s ease, background-color 0.3s ease;
 	}
 
 	@media (max-width: 1024px) {
@@ -409,6 +411,8 @@
 		margin-left: 220px;
 		flex: 1;
 		min-width: 0;
+		position: relative;
+		z-index: 1;
 	}
 
 	@media (max-width: 1024px) {

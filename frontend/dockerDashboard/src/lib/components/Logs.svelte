@@ -21,7 +21,7 @@
         if (typeof window !== "undefined" && containerId) {
             // Token als Query-Parameter übergeben, falls WS Auth benötigt, ansonsten anpassen
             ws = new WebSocket(
-                `ws://localhost:3000/ws/logs/${containerId}?token=${authState.token}`,
+                `${import.meta.env.VITE_WS_URL}/ws/logs/${containerId}?token=${authState.token}`,
             );
 
             ws.onmessage = (event) => {

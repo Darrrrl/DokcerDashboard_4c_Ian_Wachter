@@ -1,13 +1,70 @@
 export default {
+    nav: {
+        dashboard: "Dashboard",
+        history: "Historie",
+        settings: "Einstellungen"
+    },
     dashboard: {
         title: "Dashboard",
         subtitle: "Übersicht und Steuerung deines Docker-Stacks",
         search: "Container suchen...",
-        totalCpu: "Total CPU",
-        avgRam: "Ø RAM",
-        containers: "Container",
-        active: "aktiv",
-        noContainers: "Keine Container gefunden"
+        empty: "Keine Container gefunden",
+        tabs: {
+            all: "Alle",
+            running: "Laufend",
+            stopped: "Gestoppt",
+            error: "Fehler"
+        },
+        stats: {
+            running: "Laufend"
+        }
+    },
+    container: {
+        start: "Start",
+        stop: "Stopp",
+        restart: "Neustart",
+        confirmStop: "{name} wirklich stoppen?",
+        confirmRestart: "{name} wirklich neu starten?",
+        networkError: "Netzwerkfehler"
+    },
+    history: {
+        title: "Historie",
+        subtitle: "Verfolge alle Container-Ereignisse",
+        empty: "Keine Ereignisse gefunden",
+        filters: {
+            container: "Container",
+            type: "Ereignis-Typ",
+            from: "Von",
+            to: "Bis",
+            all: "Alle"
+        },
+        table: {
+            container: "Container",
+            event: "Ereignis",
+            user: "Benutzer",
+            time: "Zeitpunkt"
+        }
+    },
+    setup: {
+        title: "Setup",
+        subtitle: "Erstelle deinen Admin-Account",
+        username: "Benutzername",
+        password: "Passwort",
+        create: "Account erstellen",
+        error: "Ein Fehler ist aufgetreten"
+    },
+    login: {
+        title: "Willkommen zurück",
+        subtitle: "DockerDash · Melde dich an",
+        username: "Benutzername",
+        password: "Passwort",
+        confirmPassword: "Passwort bestätigen",
+        submitLogin: "Anmelden",
+        submitSetup: "Account erstellen",
+        errorSetup: "Passwörter stimmen nicht überein.",
+        errorAuth: "Ungültige Zugangsdaten.",
+        errorNetwork: "Netzwerkfehler.",
+        errorSetupStatus: "Konnte Setup-Status nicht laden."
     },
     details: {
         back: "Zurück zum Dashboard",
@@ -17,14 +74,16 @@ export default {
         ports: "Ports",
         noPorts: "Keine Ports veröffentlicht",
         volumes: "Volumes",
-        volumesConnected: "Volume(s) verbunden",
+        volumesConnected: "{count} Volume(s) verbunden",
         noVolumes: "Keine Volumes gemountet",
         environment: "Environment",
-        envVars: "Variablen gesetzt",
+        envVars: "{count} Variablen gesetzt",
         resources: "Ressourcen (Live)",
         liveLogs: "Live Logs",
-        confirmStop: "Möchtest du diesen Container wirklich stoppen?",
-        confirmRestart: "Möchtest du diesen Container wirklich neu starten?"
+        confirmStop: "{name} wirklich stoppen?",
+        confirmRestart: "{name} wirklich neu starten?",
+        errorLoad: "Konnte Container Details nicht laden",
+        errorAction: "Fehler beim {action}"
     },
     settings: {
         title: "Einstellungen",

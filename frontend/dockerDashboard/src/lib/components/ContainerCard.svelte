@@ -31,7 +31,7 @@
         isProcessing = true;
         try {
             const res = await fetch(
-                `http://localhost:3000/api/containers/${container.id}/${action}`,
+                `${import.meta.env.VITE_API_URL}/api/containers/${container.id}/${action}`,
                 {
                     method: "POST",
                     headers: { Authorization: `Bearer ${authState.token}` },
@@ -176,14 +176,15 @@
     .card-root {
         position: relative;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-main);
+        background: var(--card-bg);
         backdrop-filter: blur(16px);
         overflow: hidden;
         transition:
             border-color 0.2s ease,
             transform 0.2s ease,
-            box-shadow 0.2s ease;
+            box-shadow 0.2s ease,
+            background-color 0.3s ease;
     }
     .card-root:hover {
         border-color: rgba(255, 255, 255, 0.14);
@@ -298,22 +299,25 @@
         gap: 0.75rem;
         margin-bottom: 1rem;
         padding: 0.75rem;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.05);
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-main);
+    }
+    :global(body.dark-mode) .stats-grid {
+        background: rgba(0, 0, 0, 0.2);
     }
     .stat-label {
         font-size: 0.6rem;
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #3f3f46;
+        color: var(--text-muted);
         margin-bottom: 2px;
     }
     .stat-value {
         font-family: "JetBrains Mono", "Fira Code", monospace;
         font-size: 0.8rem;
-        color: #a1a1aa;
+        color: var(--text-main);
         margin-bottom: 6px;
     }
     .stat-bar-track {
@@ -338,22 +342,27 @@
     .actions {
         display: flex;
         gap: 0.5rem;
+        flex-wrap: wrap;
     }
     .btn {
         flex: 1;
+        min-width: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 5px;
-        padding: 0.45rem 0.75rem;
+        padding: 0.45rem 0.5rem;
         border-radius: 8px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         border: 1px solid transparent;
         cursor: pointer;
         transition:
             background 0.15s ease,
             opacity 0.15s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .btn:disabled {
         opacity: 0.4;

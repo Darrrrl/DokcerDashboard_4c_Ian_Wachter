@@ -15,10 +15,6 @@
         containerStore.init();
     });
 
-    onMount(() => {
-        containerStore.init();
-    });
-
     onDestroy(() => {
         containerStore.disconnect();
     });
@@ -98,19 +94,19 @@
     >
         <div>
             <h1
-                class="text-4xl font-bold tracking-tight text-white"
-                style="letter-spacing: -0.03em;"
+                class="text-4xl font-bold tracking-tight"
+                style="letter-spacing: -0.03em; color: var(--text-main);"
             >
                 {t("dashboard.title")}
             </h1>
-            <p class="mt-1 text-sm text-zinc-500">
+            <p class="mt-1 text-sm" style="color: var(--text-muted);">
                 {t("dashboard.subtitle")}
             </p>
         </div>
 
         <div class="relative w-full md:w-72">
             <svg
-                style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #71717a; pointer-events: none; flex-shrink: 0;"
+                style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); pointer-events: none; flex-shrink: 0;"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -126,7 +122,8 @@
                 type="text"
                 bind:value={searchQuery}
                 placeholder={t("dashboard.search")}
-                class="w-full rounded-xl border border-white/8 bg-white/4 py-2.5 pl-9 pr-4 text-sm text-zinc-200 placeholder-zinc-600 outline-none backdrop-blur-md transition-all focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/30"
+                class="w-full rounded-xl border bg-white/4 py-2.5 pl-9 pr-4 text-sm outline-none backdrop-blur-md transition-all focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/30"
+                style="border-color: var(--border-main); color: var(--text-main); background: var(--card-bg);"
             />
         </div>
     </header>
@@ -181,7 +178,7 @@
         </div>
     </div>
 
-    <div class="mb-6 grid grid-cols-3 gap-3">
+    <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div class="stat-card stat-running">
             <span class="stat-num">{counts.running}</span>
             <span class="stat-lbl">{t("dashboard.tabs.running")}</span>
@@ -252,8 +249,8 @@
         align-items: center;
         padding: 0.75rem 1rem;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-main);
+        background: var(--card-bg);
         backdrop-filter: blur(8px);
     }
     .stat-num {
@@ -270,39 +267,46 @@
         margin-top: 3px;
     }
     .stat-running .stat-num {
-        color: #34d399;
+        color: #10b981;
     }
     .stat-running .stat-lbl {
-        color: #065f46;
+        color: #059669;
     }
     .stat-running {
-        border-color: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.2);
     }
     .stat-stopped .stat-num {
-        color: #52525b;
+        color: var(--text-muted);
     }
     .stat-stopped .stat-lbl {
-        color: #3f3f46;
+        color: var(--text-muted);
     }
     .stat-error .stat-num {
-        color: #fbbf24;
+        color: #f59e0b;
     }
     .stat-error .stat-lbl {
-        color: #78350f;
+        color: #d97706;
     }
     .stat-error {
-        border-color: rgba(245, 158, 11, 0.12);
+        border-color: rgba(245, 158, 11, 0.2);
     }
     .resource-bar {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 0.75rem;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
         margin-bottom: 1.5rem;
         padding: 1rem 1.25rem;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: var(--card-bg);
+        border: 1px solid var(--border-main);
         border-radius: 14px;
         backdrop-filter: blur(8px);
+    }
+
+    @media (min-width: 768px) {
+        .resource-bar {
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+        }
     }
 
     .resource-item {
@@ -322,14 +326,14 @@
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #3f3f46;
+        color: var(--text-muted);
     }
 
     .resource-value {
         font-family: "JetBrains Mono", monospace;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #71717a;
+        color: var(--text-muted);
     }
     .cpu-val {
         color: #34d399;

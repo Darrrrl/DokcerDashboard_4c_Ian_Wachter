@@ -14,7 +14,7 @@
         loading = true;
         error = "";
         try {
-            const res = await fetch("http://localhost:3000/api/auth/setup", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/setup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
@@ -35,7 +35,7 @@
 
     onMount(async () => {
         // Double check if setup is actually required
-        const res = await fetch("http://localhost:3000/api/auth/setup-required");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/setup-required`);
         const data = await res.json();
         if (!data.required) {
             goto("/login");

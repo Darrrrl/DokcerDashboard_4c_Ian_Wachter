@@ -1,13 +1,70 @@
 export default {
+    nav: {
+        dashboard: "Dashboard",
+        history: "History",
+        settings: "Settings"
+    },
     dashboard: {
         title: "Dashboard",
         subtitle: "Overview and control of your Docker stack",
         search: "Search containers...",
-        totalCpu: "Total CPU",
-        avgRam: "Avg RAM",
-        containers: "Containers",
-        active: "active",
-        noContainers: "No containers found"
+        empty: "No containers found",
+        tabs: {
+            all: "All",
+            running: "Running",
+            stopped: "Stopped",
+            error: "Error"
+        },
+        stats: {
+            running: "Running"
+        }
+    },
+    container: {
+        start: "Start",
+        stop: "Stop",
+        restart: "Restart",
+        confirmStop: "Stop {name}?",
+        confirmRestart: "Restart {name}?",
+        networkError: "Network error"
+    },
+    history: {
+        title: "History",
+        subtitle: "Track all container events",
+        empty: "No events found",
+        filters: {
+            container: "Container",
+            type: "Event Type",
+            from: "From",
+            to: "To",
+            all: "All"
+        },
+        table: {
+            container: "Container",
+            event: "Event",
+            user: "User",
+            time: "Time"
+        }
+    },
+    setup: {
+        title: "Setup",
+        subtitle: "Create your admin account",
+        username: "Username",
+        password: "Password",
+        create: "Create Account",
+        error: "An error occurred"
+    },
+    login: {
+        title: "Welcome Back",
+        subtitle: "DockerDash · Sign in to continue",
+        username: "Username",
+        password: "Password",
+        confirmPassword: "Confirm Password",
+        submitLogin: "Sign In",
+        submitSetup: "Create Account",
+        errorSetup: "Passwords do not match.",
+        errorAuth: "Invalid credentials.",
+        errorNetwork: "Network error.",
+        errorSetupStatus: "Failed to load setup status."
     },
     details: {
         back: "Back to Dashboard",
@@ -17,14 +74,16 @@ export default {
         ports: "Ports",
         noPorts: "No ports published",
         volumes: "Volumes",
-        volumesConnected: "Volume(s) connected",
+        volumesConnected: "{count} volume(s) connected",
         noVolumes: "No volumes mounted",
         environment: "Environment",
-        envVars: "Variables set",
+        envVars: "{count} variables set",
         resources: "Resources (Live)",
         liveLogs: "Live Logs",
-        confirmStop: "Do you really want to stop this container?",
-        confirmRestart: "Do you really want to restart this container?"
+        confirmStop: "Stop {name}?",
+        confirmRestart: "Restart {name}?",
+        errorLoad: "Failed to load container details",
+        errorAction: "Error during {action}"
     },
     settings: {
         title: "Settings",

@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-emerald: #10b981;
+  --color-brand-indigo: #6366f1;
+}
+
+:root {
+    --bg-app: #ffffff;
+    --bg-gradient-top: #f4f4f5;
+    --text-main: #18181b;
+    --text-muted: #71717a;
+    --border-main: rgba(0, 0, 0, 0.08);
+    --card-bg: rgba(0, 0, 0, 0.02);
+    --sidebar-bg: #ffffff;
+}
+
+body.dark-mode {
+    --bg-app: #09090b;
+    --bg-gradient-top: #18181b;
+    --text-main: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --border-main: rgba(255, 255, 255, 0.06);
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --sidebar-bg: #09090b;
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

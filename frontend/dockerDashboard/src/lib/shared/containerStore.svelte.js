@@ -44,7 +44,7 @@ function createContainerStore() {
             errorMessage = "";
 
             try {
-                const res = await apiFetch("http://localhost:3000/api/containers");
+                const res = await apiFetch(`${import.meta.env.VITE_API_URL}/api/containers`);
 
                 if (res.ok) {
                     const rawContainers = await res.json();
@@ -68,7 +68,7 @@ function createContainerStore() {
 
             if (reconnectTimeout) clearTimeout(reconnectTimeout);
 
-            socket = new WebSocket(`ws://localhost:3000/ws/stats?token=${authState.token}`);
+            socket = new WebSocket(`${import.meta.env.VITE_WS_URL}/ws/stats?token=${authState.token}`);
 
             socket.onmessage = (event) => {
                 const liveStats = JSON.parse(event.data);
@@ -120,4 +120,4 @@ function createContainerStore() {
     };
 }
 
-export const containerStore = createContainerStore();
+export const containerStore = createContainerStore();;

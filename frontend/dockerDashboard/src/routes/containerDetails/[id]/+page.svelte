@@ -4,6 +4,9 @@
     import LogViewer from "$lib/components/Logs.svelte"; // Achte darauf, dass der Dateiname passt
     import StatChart from "$lib/components/Graph.svelte"; // Achte darauf, dass der Dateiname passt
     import { containerStore } from "$lib/shared/containerStore.svelte.js";
+    import { settingsStore } from "$lib/shared/settingsStore.svelte.js";
+
+    const t = (key, replacements) => settingsStore.t(key, replacements);
 
     let containerId = $derived($page.params.id);
     let details = $state(null);
@@ -25,13 +28,13 @@
     async function fetchContainerDetails() {
         try {
             const res = await fetch(
-                `http://localhost:3000/api/containers/${containerId}`,
+                `${import.meta.env.VITE_API_URL}/api/containers/${containerId}`,
                 {
                     headers: { Authorization: `Bearer ${authState.token}` },
                 },
             );
             if (!res.ok)
-                throw new Error("Konnte Container Details nicht laden");
+                throw new Error(t("details.errorLoad"));
             details = await res.json();
         } catch (err) {
             error = err.message;
@@ -41,25 +44,25 @@
     async function handleAction(action) {
         if (
             action === "stop" &&
-            !confirm(`Möchtest du ${details.name} wirklich stoppen?`)
+            !confirm(t("details.confirmStop", { name: details.name }))
         )
             return;
         if (
             action === "restart" &&
-            !confirm(`Möchtest du ${details.name} wirklich neu starten?`)
+            !confirm(t("details.confirmRestart", { name: details.name }))
         )
             return;
 
         isProcessing = true;
         try {
             const res = await fetch(
-                `http://localhost:3000/api/containers/${containerId}/${action}`,
+                `${import.meta.env.VITE_API_URL}/api/containers/${containerId}/${action}`,
                 {
                     method: "POST",
                     headers: { Authorization: `Bearer ${authState.token}` },
                 },
             );
-            if (!res.ok) throw new Error(`Fehler beim ${action}`);
+            if (!res.ok) throw new Error(t("details.errorAction", { action }));
 
             await fetchContainerDetails();
         } catch (err) {
@@ -88,7 +91,7 @@
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 ></path></svg
             >
-            Zurück zum Dashboard
+            {t("details.back")}
         </a>
     </div>
 
@@ -100,7 +103,7 @@
         </div>
     {:else if !details}
         <div class="flex h-32 items-center justify-center text-zinc-500">
-            Lade Container Details...
+            {t("details.loading")}
         </div>
     {:else}
         <header
@@ -131,20 +134,20 @@
                         onclick={() => handleAction("start")}
                         disabled={isProcessing}
                         class="rounded-lg bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-emerald-600 disabled:opacity-50"
-                        >Start</button
+                        >{t("container.start")}</button
                     >
                 {:else if details.state === "running"}
                     <button
                         onclick={() => handleAction("restart")}
                         disabled={isProcessing}
                         class="rounded-lg border border-amber-500/50 bg-amber-500/10 px-6 py-2.5 text-sm font-semibold text-amber-500 transition-all hover:bg-amber-500/20 disabled:opacity-50"
-                        >Restart</button
+                        >{t("container.restart")}</button
                     >
                     <button
                         onclick={() => handleAction("stop")}
                         disabled={isProcessing}
                         class="rounded-lg border border-rose-500/50 bg-rose-500/10 px-6 py-2.5 text-sm font-semibold text-rose-500 transition-all hover:bg-rose-500/20 disabled:opacity-50"
-                        >Stop</button
+                        >{t("container.stop")}</button
                     >
                 {/if}
             </div>
@@ -156,14 +159,14 @@
                     class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
                 >
                     <h2 class="mb-4 text-lg font-semibold text-white">
-                        Metadaten
+                        {t("details.metadata")}
                     </h2>
 
                     <div class="space-y-4">
                         <div>
                             <span
                                 class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                                >Netzwerk</span
+                                >{t("details.network")}</span
                             >
                             <div class="mt-1">
                                 <span
@@ -176,7 +179,7 @@
                         <div>
                             <span
                                 class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                                >Ports</span
+                                >{t("details.ports")}</span
                             >
                             <div class="mt-1 space-y-1">
                                 {#if details.ports && Object.keys(details.ports).length > 0}
@@ -189,7 +192,7 @@
                                     {/each}
                                 {:else}
                                     <div class="text-sm text-zinc-500">
-                                        Keine Ports veröffentlicht
+                                        {t("details.noPorts")}
                                     </div>
                                 {/if}
                             </div>
@@ -198,16 +201,16 @@
                         <div>
                             <span
                                 class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                                >Volumes</span
+                                >{t("details.volumes")}</span
                             >
                             <div class="mt-1 space-y-2">
                                 {#if details.volumes && details.volumes.length > 0}
                                     <div class="text-xs text-zinc-400">
-                                        {details.volumes.length} Volume(s) verbunden
+                                        {t("details.volumesConnected", { count: details.volumes.length })}
                                     </div>
                                 {:else}
                                     <div class="text-sm text-zinc-500">
-                                        Keine Volumes gemountet
+                                        {t("details.noVolumes")}
                                     </div>
                                 {/if}
                             </div>
@@ -216,12 +219,12 @@
                         <div>
                             <span
                                 class="text-xs font-bold uppercase tracking-wider text-zinc-500"
-                                >Environment</span
+                                >{t("details.environment")}</span
                             >
                             <div class="mt-1 space-y-1">
                                 {#if details.env && details.env.length > 0}
                                     <div class="text-xs text-zinc-400">
-                                        {details.env.length} Variablen gesetzt
+                                        {t("details.envVars", { count: details.env.length })}
                                     </div>
                                 {:else}
                                     <div class="text-sm text-zinc-500">-</div>
@@ -235,7 +238,7 @@
                     class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
                 >
                     <h2 class="mb-4 text-lg font-semibold text-white">
-                        Ressourcen (Live)
+                        {t("details.resources")}
                     </h2>
                     <StatChart historyData={statsHistory} />
                 </div>
@@ -246,7 +249,7 @@
                     class="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
                 >
                     <h2 class="mb-4 text-lg font-semibold text-white">
-                        Live Logs
+                        {t("details.liveLogs")}
                     </h2>
                     <LogViewer {containerId} />
                 </div>

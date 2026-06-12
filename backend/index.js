@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
@@ -101,7 +101,7 @@ function stopStatsPolling() {
 }
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -222,8 +222,7 @@ wss.on('connection', (ws, req) => {
     }
 });
 
-server.listen(port, () => {
+server.listen(port, '0.0.0.0', () => {
     console.log(`Backend Server listening on port ${port}`);
-    console.log(`Swagger API Docs unter: http://localhost:${port}/api-docs`);
-
+    console.log(`Swagger API Docs available on port ${port} at /api-docs`);
 });

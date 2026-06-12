@@ -1,7 +1,10 @@
 <script>
     import { authState, setAuthToken } from "$lib/shared/authStore.svelte";
+    import { settingsStore } from "$lib/shared/settingsStore.svelte";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
+
+    const t = (key) => settingsStore.t(key);
 
     let isLoading = $state(true);
     let isSetupRequired = $state(false);
@@ -14,12 +17,12 @@
     onMount(async () => {
         try {
             const res = await fetch(
-                "http://localhost:3000/api/auth/setup-required",
+                `${import.meta.env.VITE_API_URL}/api/auth/setup-required`,
             );
             const data = await res.json();
             isSetupRequired = data.required;
         } catch (error) {
-            errorMessage = "Konnte Setup-Status nicht laden.";
+            errorMessage = t("login.errorSetupStatus");
         } finally {
             isLoading = false;
         }
@@ -31,11 +34,11 @@
         try {
             if (isSetupRequired) {
                 if (password !== passwordConfirm) {
-                    errorMessage = "Passwörter stimmen nicht überein.";
+                    errorMessage = t("login.errorSetup");
                     return;
                 }
                 const res = await fetch(
-                    "http://localhost:3000/api/auth/setup",
+                    `${import.meta.env.VITE_API_URL}/api/auth/setup`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -46,12 +49,10 @@
                     const created = await res.json();
                     isSetupRequired = !created;
                 } else {
-                    errorMessage = "Setup fehlgeschlagen.";
+                    errorMessage = t("setup.error");
                 }
             } else {
-                const res = await fetch(
-                    "http://localhost:3000/api/auth/login",
-                    {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ username, password }),
@@ -62,11 +63,11 @@
                     setAuthToken(data.token);
                     goto("/");
                 } else {
-                    errorMessage = "Ungültige Zugangsdaten.";
+                    errorMessage = t("login.errorAuth");
                 }
             }
         } catch (e) {
-            errorMessage = "Netzwerkfehler.";
+            errorMessage = t("login.errorNetwork");
         } finally {
             isSubmitting = false;
         }
@@ -132,19 +133,19 @@
         {:else}
             <div class="card-header">
                 <h1 class="title">
-                    {isSetupRequired ? "Setup" : "Willkommen zurück"}
+                    {isSetupRequired ? t("setup.title") : t("login.title")}
                 </h1>
                 <p class="subtitle">
                     {isSetupRequired
-                        ? "Erstelle deinen Admin-Account"
-                        : "DockerDash · Melde dich an"}
+                        ? t("setup.subtitle")
+                        : t("login.subtitle")}
                 </p>
             </div>
 
             <div class="form">
                 <div class="field">
                     <label class="field-label" for="username"
-                        >Benutzername</label
+                        >{t("login.username")}</label
                     >
                     <input
                         id="username"
@@ -158,7 +159,7 @@
                 </div>
 
                 <div class="field">
-                    <label class="field-label" for="password">Passwort</label>
+                    <label class="field-label" for="password">{t("login.password")}</label>
                     <input
                         id="password"
                         type="password"
@@ -175,7 +176,7 @@
                 {#if isSetupRequired}
                     <div class="field">
                         <label class="field-label" for="passwordConfirm"
-                            >Passwort bestätigen</label
+                            >{t("login.confirmPassword")}</label
                         >
                         <input
                             id="passwordConfirm"
@@ -219,7 +220,7 @@
                     {#if isSubmitting}
                         <div class="btn-spinner"></div>
                     {:else}
-                        {isSetupRequired ? "Account erstellen" : "Anmelden"}
+                        {isSetupRequired ? t("login.submitSetup") : t("login.submitLogin")}
                     {/if}
                 </button>
             </div>

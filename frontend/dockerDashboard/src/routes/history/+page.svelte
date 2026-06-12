@@ -25,7 +25,7 @@
             if (fromDate) params.append("from", new Date(fromDate).getTime());
             if (toDate) params.append("to", new Date(toDate).getTime());
 
-            const res = await fetch(`http://localhost:3000/api/history?${params.toString()}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/history?${params.toString()}`, {
                 headers: { Authorization: `Bearer ${authState.token}` },
             });
 
@@ -160,14 +160,14 @@
     .page-title {
         font-size: 2rem;
         font-weight: 700;
-        color: #f4f4f5;
+        color: var(--text-main);
         letter-spacing: -0.03em;
         margin: 0 0 0.25rem;
     }
 
     .page-subtitle {
         font-size: 0.8rem;
-        color: #52525b;
+        color: var(--text-muted);
         margin: 0;
         font-family: "JetBrains Mono", monospace;
     }
@@ -176,8 +176,8 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.07);
+        background: var(--card-bg);
+        border: 1px solid var(--border-main);
         border-radius: 16px;
         padding: 1.5rem;
         margin-bottom: 2rem;
@@ -194,17 +194,20 @@
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #3f3f46;
+        color: var(--text-muted);
     }
 
     .filter-group select, .filter-group input {
-        background: rgba(0, 0, 0, 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-main);
         border-radius: 8px;
         padding: 0.5rem 0.75rem;
         font-size: 0.875rem;
-        color: #e4e4e7;
+        color: var(--text-main);
         outline: none;
+    }
+    :global(body.dark-mode) .filter-group select, :global(body.dark-mode) .filter-group input {
+        background: rgba(0, 0, 0, 0.25);
     }
 
     .filter-group select:focus, .filter-group input:focus {
@@ -212,8 +215,8 @@
     }
 
     .table-container {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.07);
+        background: var(--card-bg);
+        border: 1px solid var(--border-main);
         border-radius: 16px;
         overflow-x: auto;
     }
@@ -230,14 +233,14 @@
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #3f3f46;
+        color: var(--text-muted);
         padding: 1rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        border-bottom: 1px solid var(--border-main);
     }
 
     .history-table td {
         padding: 1rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid var(--border-main);
     }
 
     .container-cell {
@@ -248,13 +251,13 @@
     .c-name {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #d4d4d8;
+        color: var(--text-main);
     }
 
     .c-id {
         font-size: 0.7rem;
         font-family: "JetBrains Mono", monospace;
-        color: #52525b;
+        color: var(--text-muted);
     }
 
     .event-badge {

@@ -36,7 +36,7 @@ function createSettingsStore() {
 
         async load() {
             async function tryLoad() {
-                return await fetch("http://localhost:3000/api/settings", {
+                return await fetch(`${import.meta.env.VITE_API_URL}/api/settings`, {
                     headers: { Authorization: `Bearer ${authState.token}` }
                 });
             }
@@ -70,7 +70,7 @@ function createSettingsStore() {
             hiddenContainers = updates.hidden_containers ?? hiddenContainers;
 
             async function trySave() {
-                return await fetch("http://localhost:3000/api/settings", {
+                return await fetch(`${import.meta.env.VITE_API_URL}/api/settings`, {
                     method: "PUT",
                     headers: {
                         Authorization: `Bearer ${authState.token}`,
